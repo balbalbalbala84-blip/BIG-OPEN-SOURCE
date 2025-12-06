@@ -1,0 +1,1286 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>GPT Manager - Advanced</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #000;
+            min-height: 100vh;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        /* Animated Background */
+        .bg-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 50%, rgba(120, 119, 198, 0.15) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 80%, rgba(255, 128, 255, 0.15) 0%, transparent 50%),
+                        radial-gradient(circle at 40% 20%, rgba(0, 191, 255, 0.15) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+            padding-top: 20px;
+        }
+
+        .header h1 {
+            font-size: 56px;
+            font-weight: 900;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 12px;
+            letter-spacing: -2px;
+            text-shadow: 0 0 80px rgba(102, 126, 234, 0.5);
+        }
+
+        .header p {
+            color: #888;
+            font-size: 16px;
+            font-weight: 500;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        /* Main Grid */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 400px 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 1200px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Glass Card */
+        .glass-card {
+            background: rgba(20, 20, 20, 0.6);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .glass-card:hover {
+            border-color: rgba(102, 126, 234, 0.3);
+            box-shadow: 0 8px 48px rgba(102, 126, 234, 0.2);
+        }
+
+        .card-header {
+            padding: 24px 28px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .card-header h2 {
+            font-size: 20px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea, #f093fb);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .card-icon {
+            font-size: 28px;
+        }
+
+        .card-body {
+            padding: 28px;
+        }
+
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #aaa;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 14px 18px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: #fff;
+            font-size: 15px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.15);
+        }
+
+        input::placeholder {
+            color: #555;
+        }
+
+        select {
+            cursor: pointer;
+        }
+
+        /* Primary Button */
+        .btn-primary {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 12px;
+            color: #fff;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn-primary:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 32px rgba(102, 126, 234, 0.5);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        /* Alert */
+        .alert {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 16px 24px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            z-index: 1000;
+            display: none;
+            animation: slideInRight 0.3s ease;
+            max-width: 400px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(100px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .alert.success {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(5, 150, 105, 0.2));
+            border: 2px solid rgba(16, 185, 129, 0.5);
+            color: #10b981;
+        }
+
+        .alert.error {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(220, 38, 38, 0.2));
+            border: 2px solid rgba(239, 68, 68, 0.5);
+            color: #ef4444;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+            padding: 24px;
+            border-radius: 16px;
+            border: 1px solid rgba(102, 126, 234, 0.2);
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(102, 126, 234, 0.4);
+            box-shadow: 0 8px 24px rgba(102, 126, 234, 0.3);
+        }
+
+        .stat-number {
+            font-size: 36px;
+            font-weight: 900;
+            background: linear-gradient(135deg, #667eea, #f093fb);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 700;
+        }
+
+        /* Search Box */
+        .search-box {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .search-box input {
+            padding-left: 48px;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 20px;
+            opacity: 0.5;
+        }
+
+        /* Filter Tabs */
+        .filter-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 24px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+        }
+
+        .filter-tab {
+            padding: 12px 24px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            color: #888;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 700;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+
+        .filter-tab:hover {
+            border-color: rgba(102, 126, 234, 0.3);
+            color: #667eea;
+        }
+
+        .filter-tab.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-color: transparent;
+            color: #fff;
+            box-shadow: 0 4px 16px rgba(102, 126, 234, 0.4);
+        }
+
+        /* User List */
+        .user-list {
+            display: grid;
+            gap: 20px;
+            max-height: 700px;
+            overflow-y: auto;
+            padding-right: 8px;
+        }
+
+        .user-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .user-list::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 3px;
+        }
+
+        .user-list::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 3px;
+        }
+
+        /* User Card */
+        .user-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+            border-radius: 20px;
+            padding: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .user-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(180deg, #667eea, #764ba2);
+        }
+
+        .user-card:hover {
+            border-color: rgba(102, 126, 234, 0.3);
+            transform: translateX(4px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .user-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .user-id {
+            font-size: 18px;
+            font-weight: 800;
+            color: #667eea;
+            font-family: 'Courier New', monospace;
+            letter-spacing: -0.5px;
+        }
+
+        .role-badge {
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .role-badge.owner {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(220, 38, 38, 0.2));
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.4);
+        }
+
+        .role-badge.admin {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(37, 99, 235, 0.2));
+            color: #3b82f6;
+            border: 1px solid rgba(59, 130, 246, 0.4);
+        }
+
+        .role-badge.user {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(5, 150, 105, 0.2));
+            color: #10b981;
+            border: 1px solid rgba(16, 185, 129, 0.4);
+        }
+
+        .user-details {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .detail-item {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .detail-label {
+            font-size: 10px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 700;
+        }
+
+        .detail-value {
+            font-size: 15px;
+            color: #ccc;
+            font-weight: 600;
+        }
+
+        .credits-bar {
+            background: rgba(255, 255, 255, 0.05);
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .credits-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2, #f093fb);
+            transition: width 0.5s ease;
+            box-shadow: 0 0 10px rgba(102, 126, 234, 0.5);
+        }
+
+        .action-buttons {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        .action-btn {
+            padding: 12px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 700;
+            transition: all 0.2s ease;
+            border: 2px solid;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .delete-btn {
+            background: rgba(239, 68, 68, 0.1);
+            border-color: rgba(239, 68, 68, 0.3);
+            color: #ef4444;
+        }
+
+        .delete-btn:hover {
+            background: rgba(239, 68, 68, 0.2);
+            border-color: #ef4444;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+        }
+
+        .share-btn {
+            background: rgba(37, 211, 102, 0.1);
+            border-color: rgba(37, 211, 102, 0.3);
+            color: #25d366;
+        }
+
+        .share-btn:hover {
+            background: rgba(37, 211, 102, 0.2);
+            border-color: #25d366;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
+        }
+
+        .edit-btn {
+            background: rgba(59, 130, 246, 0.1);
+            border-color: rgba(59, 130, 246, 0.3);
+            color: #3b82f6;
+        }
+
+        .edit-btn:hover {
+            background: rgba(59, 130, 246, 0.2);
+            border-color: #3b82f6;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 16px;
+            margin-top: 28px;
+            padding-top: 28px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .page-btn {
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: #888;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            margin: 0;
+            width: auto;
+        }
+
+        .page-btn:hover:not(:disabled) {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: #667eea;
+            color: #667eea;
+            transform: translateY(-2px);
+        }
+
+        .page-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .page-info {
+            color: #888;
+            font-size: 14px;
+            font-weight: 700;
+            padding: 0 16px;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #1a1a1a, #151515);
+            margin: 5% auto;
+            padding: 0;
+            border: 1px solid rgba(102, 126, 234, 0.3);
+            border-radius: 24px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            padding: 24px 28px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            font-size: 22px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #667eea, #f093fb);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .close {
+            font-size: 32px;
+            font-weight: 300;
+            color: #888;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            line-height: 1;
+        }
+
+        .close:hover {
+            color: #ef4444;
+            transform: rotate(90deg);
+        }
+
+        .modal-body {
+            padding: 28px;
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 60px 20px;
+            color: #888;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            margin: 0 auto 20px;
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-top-color: #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 80px 20px;
+            color: #666;
+        }
+
+        .empty-state-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            opacity: 0.3;
+        }
+
+        .empty-state p {
+            font-size: 16px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-overlay"></div>
+    
+    <div id="alert" class="alert"></div>
+
+    <div class="container">
+        <div class="header">
+            <h1>⚡ GPT MANAGER</h1>
+            <p>Advanced User Management System</p>
+        </div>
+
+        <div class="main-grid">
+            <!-- Add User Form -->
+            <div class="glass-card">
+                <div class="card-body">
+                    <form id="addUserForm">
+                        <div class="form-group">
+                            <label>Username</label>
+                            <input type="text" id="username" placeholder="Masukkan username" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Password</label>
+                            <input type="text" id="password" placeholder="Masukkan password" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Role</label>
+                            <select id="role" required>
+                                <option value="owner">Owner</option>
+                                <option value="user">User</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Credits</label>
+                            <input type="number" id="credits" placeholder="Jumlah credits" value="1000" required min="0">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Tanggal Expired</label>
+                            <input type="date" id="expired" required>
+                        </div>
+
+                        <button type="submit" class="btn-primary">Tambah User</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- User List -->
+            <div class="glass-card">
+                <div class="card-body">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-number" id="totalUsers">0</div>
+                            <div class="stat-label">Total Users</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number" id="activeUsers">0</div>
+                            <div class="stat-label">Active Users</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number" id="expiredUsers">0</div>
+                            <div class="stat-label">Expired Users</div>
+                        </div>
+                    </div>
+
+                    <div class="search-box">
+                        <span class="search-icon"></span>
+                        <input type="text" id="searchInput" placeholder="Cari username atau ID...">
+                    </div>
+
+                    <div class="filter-tabs">
+                        <div class="filter-tab active" data-filter="all">Semua</div>
+                        <div class="filter-tab" data-filter="owner">Owner</div>
+                        <div class="filter-tab" data-filter="user">User</div>
+                    </div>
+
+                    <div class="user-list" id="userList">
+                        <div class="loading">
+                            <div class="loading-spinner"></div>
+                            <p>Memuat data...</p>
+                        </div>
+                    </div>
+
+                    <div class="pagination" id="pagination" style="display: none;">
+                        <button class="page-btn" id="prevBtn">◀ Prev</button>
+                        <span class="page-info" id="pageInfo">Page 1 of 1</span>
+                        <button class="page-btn" id="nextBtn">Next ▶</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Modal -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Edit User</h3>
+                <span class="close" onclick="closeEditModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="editUserForm">
+                    <input type="hidden" id="editUserId">
+                    
+                    <div class="form-group">
+                        <label>Username</label>
+                        <input type="text" id="editUsername" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="text" id="editPassword" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Role</label>
+                        <select id="editRole" required>
+                            <option value="owner">Owner</option>
+                            <option value="user">User</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Credits</label>
+                        <input type="number" id="editCredits" required min="0">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Tanggal Expired</label>
+                        <input type="date" id="editExpired" required>
+                    </div>
+
+                    <button type="submit" class="btn-primary">Simpan Perubahan</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getDatabase, ref, set, onValue, remove, update } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyD4H5WqXsv7TYLqYlaZUtJJcwyZaIueSls",
+            authDomain: "wormgptx.firebaseapp.com",
+            databaseURL: "https://wormgptx-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "wormgptx",
+            storageBucket: "wormgptx.firebasestorage.app",
+            messagingSenderId: "699515675996",
+            appId: "1:699515675996:web:7c7367ee05318c416c4d99",
+            measurementId: "G-1LWR54H8X2"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        const usersRef = ref(db, 'UsersGPT');
+
+        let currentFilter = 'all';
+        let searchQuery = '';
+        let allUsers = {};
+        let currentPage = 1;
+        const itemsPerPage = 15;
+
+        // Generate User ID
+        function generateUserId() {
+            const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+            const prefix = Math.random().toString(36).substring(2, 4);
+            let id = prefix + '_';
+            for (let i = 0; i < 5; i++) {
+                id += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return id;
+        }
+
+        // Show Alert
+        function showAlert(message, type) {
+            const alert = document.getElementById('alert');
+            alert.textContent = message;
+            alert.className = `alert ${type}`;
+            alert.style.display = 'block';
+            setTimeout(() => {
+                alert.style.display = 'none';
+            }, 4000);
+        }
+
+        // Format Date
+        function formatDate(dateString) {
+            if (!dateString) return 'N/A';
+            const date = new Date(dateString);
+            const options = { day: 'numeric', month: 'short', year: 'numeric' };
+            return date.toLocaleDateString('id-ID', options);
+        }
+
+        // Check if Expired
+        function isExpired(expiredDate) {
+            if (!expiredDate) return true;
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const expired = new Date(expiredDate);
+            expired.setHours(0, 0, 0, 0);
+            return expired < today;
+        }
+
+        // Check and Delete Expired Users
+        function checkExpiredUsers(users) {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            Object.keys(users).forEach(userId => {
+                const user = users[userId];
+                if (!user || !user.expired) return;
+                
+                const expiredDate = new Date(user.expired);
+                expiredDate.setHours(0, 0, 0, 0);
+
+                if (expiredDate < today) {
+                    remove(ref(db, `UsersGPT/${userId}`));
+                }
+            });
+        }
+
+        // Update Stats
+        function updateStats(users) {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            let total = 0;
+            let active = 0;
+            let expired = 0;
+
+            Object.keys(users).forEach(userId => {
+                const user = users[userId];
+                if (!user || !user.expired) return;
+                
+                const expiredDate = new Date(user.expired);
+                expiredDate.setHours(0, 0, 0, 0);
+
+                total++;
+                if (expiredDate >= today) {
+                    active++;
+                } else {
+                    expired++;
+                }
+            });
+
+            document.getElementById('totalUsers').textContent = total;
+            document.getElementById('activeUsers').textContent = active;
+            document.getElementById('expiredUsers').textContent = expired;
+        }
+
+        // Get Filtered Users
+        function getFilteredUsers() {
+            if (!allUsers) return [];
+            
+            return Object.keys(allUsers).filter(userId => {
+                try {
+                    const user = allUsers[userId];
+                    if (!user) return false;
+                    
+                    const matchesFilter = currentFilter === 'all' || user.role === currentFilter;
+                    const matchesSearch = searchQuery === '' || 
+                        userId.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                        (user.user && user.user.toLowerCase().includes(searchQuery.toLowerCase()));
+                    return matchesFilter && matchesSearch;
+                } catch (e) {
+                    return false;
+                }
+            });
+        }
+
+        // Render User Card
+        function renderUserCard(userId, user) {
+            try {
+                if (!user) return null;
+                
+                const expired = isExpired(user.expired);
+                const userCredits = parseInt(user.credits) || 0;
+                const creditsPercent = Math.min(100, (userCredits / 1000) * 100);
+
+                const userDiv = document.createElement('div');
+                userDiv.className = 'user-card';
+                
+                const escapeHtml = (str) => {
+                    const div = document.createElement('div');
+                    div.textContent = str || 'N/A';
+                    return div.innerHTML;
+                };
+
+                userDiv.innerHTML = `
+                    <div class="user-header">
+                        <div class="user-id">${escapeHtml(userId)}</div>
+                        <div class="role-badge ${user.role || 'user'}">${escapeHtml(user.role || 'user')}</div>
+                    </div>
+                    <div class="user-details">
+                        <div class="detail-item">
+                            <div class="detail-label">Username</div>
+                            <div class="detail-value">👤 ${escapeHtml(user.user)}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Password</div>
+                            <div class="detail-value">🔑 ${escapeHtml(user.pass)}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Credits</div>
+                            <div class="detail-value">💎 ${userCredits}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Expired</div>
+                            <div class="detail-value" style="color: ${expired ? '#ef4444' : '#10b981'}">
+                                📅 ${formatDate(user.expired)}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="credits-bar">
+                        <div class="credits-fill" style="width: ${creditsPercent}%"></div>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="action-btn edit-btn" data-action="edit" data-userid="${userId}">✏️ Edit</button>
+                        <button class="action-btn share-btn" data-action="share" data-userid="${userId}">📱 Share</button>
+                        <button class="action-btn delete-btn" data-action="delete" data-userid="${userId}">🗑️ Hapus</button>
+                    </div>
+                `;
+                
+                return userDiv;
+            } catch (e) {
+                console.error('Error rendering user:', e);
+                return null;
+            }
+        }
+
+        // Render Page
+        function renderPage() {
+            try {
+                const userList = document.getElementById('userList');
+                const pagination = document.getElementById('pagination');
+                
+                if (!userList) return;
+                
+                userList.innerHTML = '';
+
+                const filteredUsers = getFilteredUsers();
+                
+                if (filteredUsers.length === 0) {
+                    userList.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-state-icon">${searchQuery || currentFilter !== 'all' ? '🔍' : '📭'}</div>
+                            <p>${searchQuery || currentFilter !== 'all' ? 'Tidak ada data yang sesuai' : 'Belum ada data user'}</p>
+                        </div>
+                    `;
+                    pagination.style.display = 'none';
+                    return;
+                }
+
+                const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
+                const startIndex = (currentPage - 1) * itemsPerPage;
+                const endIndex = Math.min(startIndex + itemsPerPage, filteredUsers.length);
+                const pageUsers = filteredUsers.slice(startIndex, endIndex);
+
+                const fragment = document.createDocumentFragment();
+                pageUsers.forEach(userId => {
+                    const userCard = renderUserCard(userId, allUsers[userId]);
+                    if (userCard) {
+                        fragment.appendChild(userCard);
+                    }
+                });
+                userList.appendChild(fragment);
+
+                if (totalPages > 1) {
+                    pagination.style.display = 'flex';
+                    document.getElementById('pageInfo').textContent = `Page ${currentPage} of ${totalPages}`;
+                    document.getElementById('prevBtn').disabled = currentPage === 1;
+                    document.getElementById('nextBtn').disabled = currentPage === totalPages;
+                } else {
+                    pagination.style.display = 'none';
+                }
+            } catch (error) {
+                console.error('Error in renderPage:', error);
+                const userList = document.getElementById('userList');
+                if (userList) {
+                    userList.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-state-icon">⚠️</div>
+                            <p>Error menampilkan data</p>
+                        </div>
+                    `;
+                }
+            }
+        }
+
+        // Open Edit Modal
+        window.openEditModal = function(userId) {
+            const user = allUsers[userId];
+            if (!user) return;
+
+            document.getElementById('editUserId').value = userId;
+            document.getElementById('editUsername').value = user.user || '';
+            document.getElementById('editPassword').value = user.pass || '';
+            document.getElementById('editRole').value = user.role || 'user';
+            document.getElementById('editCredits').value = user.credits || 0;
+            document.getElementById('editExpired').value = user.expired || '';
+
+            document.getElementById('editModal').style.display = 'block';
+        }
+
+        // Close Edit Modal
+        window.closeEditModal = function() {
+            document.getElementById('editModal').style.display = 'none';
+        }
+
+        // Click outside modal to close
+        window.onclick = function(event) {
+            const modal = document.getElementById('editModal');
+            if (event.target === modal) {
+                closeEditModal();
+            }
+        }
+
+        // User Actions (Edit, Delete, Share)
+        document.getElementById('userList').addEventListener('click', async (e) => {
+            const btn = e.target.closest('button[data-action]');
+            if (!btn) return;
+
+            const action = btn.dataset.action;
+            const userId = btn.dataset.userid;
+
+            if (action === 'delete') {
+                if (confirm(`⚠️ Yakin ingin menghapus user ${userId}?`)) {
+                    try {
+                        await remove(ref(db, `UsersGPT/${userId}`));
+                        showAlert('✅ User berhasil dihapus!', 'success');
+                    } catch (error) {
+                        showAlert('❌ Error: ' + error.message, 'error');
+                    }
+                }
+            } else if (action === 'edit') {
+                openEditModal(userId);
+            } else if (action === 'share') {
+                const user = allUsers[userId];
+                if (user) {
+                    const message = `🔐 *Akun WormGPT Berhasil Dibuat*\n\n` +
+                                  `━━━━━━━━━━━━━━━━━━\n` +
+                                  `👤 *Username:* ${user.user || 'N/A'}\n` +
+                                  `🔑 *Password:* ${user.pass || 'N/A'}\n` +
+                                  `🆔 *User ID:* ${userId}\n` +
+                                  `⭐ *Role:* ${user.role || 'user'}\n` +
+                                  `💎 *Credits:* ${user.credits || 0}\n` +
+                                  `📅 *Expired:* ${user.expired || 'N/A'}\n` +
+                                  `━━━━━━━━━━━━━━━━━━\n\n` +
+                                  `⚠️ *Penting:*\n` +
+                                  `• Simpan informasi ini dengan baik\n` +
+                                  `• Admin hanya mengirim 1x\n` +
+                                  `• Akun hanya untuk 1 device\n\n` +
+                                  `Creator: @putraModz\n` +
+                                  `Channel: https://whatsapp.com/channel/0029Vb6Kpf8KgsNxlsQtjC0Y`;
+                    
+                    const encodedMessage = encodeURIComponent(message);
+                    const whatsappUrl = `https://wa.me/?text=${encodedMessage}`;
+                    window.open(whatsappUrl, '_blank');
+                }
+            }
+        });
+
+        // Pagination Controls
+        document.getElementById('prevBtn').addEventListener('click', () => {
+            if (currentPage > 1) {
+                currentPage--;
+                renderPage();
+                document.getElementById('userList').scrollTop = 0;
+            }
+        });
+
+        document.getElementById('nextBtn').addEventListener('click', () => {
+            const totalPages = Math.ceil(getFilteredUsers().length / itemsPerPage);
+            if (currentPage < totalPages) {
+                currentPage++;
+                renderPage();
+                document.getElementById('userList').scrollTop = 0;
+            }
+        });
+
+        // Add User Form Submit
+        document.getElementById('addUserForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const userId = generateUserId();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const role = document.getElementById('role').value;
+            const credits = parseInt(document.getElementById('credits').value) || 0;
+            const expired = document.getElementById('expired').value;
+
+            try {
+                await set(ref(db, `UsersGPT/${userId}`), {
+                    user: username,
+                    pass: password,
+                    role: role,
+                    credits: credits,
+                    expired: expired
+                });
+
+                showAlert(`✅ User berhasil ditambahkan! ID: ${userId}`, 'success');
+                document.getElementById('addUserForm').reset();
+                document.getElementById('credits').value = '1000';
+            } catch (error) {
+                showAlert('❌ Error: ' + error.message, 'error');
+            }
+        });
+
+        // Edit User Form Submit
+        document.getElementById('editUserForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const userId = document.getElementById('editUserId').value;
+            const username = document.getElementById('editUsername').value;
+            const password = document.getElementById('editPassword').value;
+            const role = document.getElementById('editRole').value;
+            const credits = parseInt(document.getElementById('editCredits').value) || 0;
+            const expired = document.getElementById('editExpired').value;
+
+            try {
+                await update(ref(db, `UsersGPT/${userId}`), {
+                    user: username,
+                    pass: password,
+                    role: role,
+                    credits: credits,
+                    expired: expired
+                });
+
+                showAlert('✅ User berhasil diupdate!', 'success');
+                closeEditModal();
+            } catch (error) {
+                showAlert('❌ Error: ' + error.message, 'error');
+            }
+        });
+
+        // Filter Tabs
+        document.querySelectorAll('.filter-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                currentFilter = tab.dataset.filter;
+                currentPage = 1;
+                renderPage();
+            });
+        });
+
+        // Search Input with Debounce
+        let searchTimeout;
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                searchQuery = e.target.value;
+                currentPage = 1;
+                renderPage();
+            }, 300);
+        });
+
+        // Firebase Listener
+        onValue(usersRef, (snapshot) => {
+            const users = snapshot.val();
+            allUsers = users || {};
+
+            if (users) {
+                checkExpiredUsers(users);
+                updateStats(users);
+            } else {
+                updateStats({});
+            }
+            
+            currentPage = 1;
+            renderPage();
+        });
+
+        // Auto-check expired users every hour
+        setInterval(() => {
+            onValue(usersRef, (snapshot) => {
+                const users = snapshot.val();
+                if (users) {
+                    checkExpiredUsers(users);
+                }
+            }, { onlyOnce: true });
+        }, 3600000);
+    </script>
+</body>
+</html>
